@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "671779839675",
+    "project_id": "feedyou-a2298",
+    "storage_bucket": "feedyou-a2298.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671779839675:android:0c9c2030fb579aa780d39e",
+        "android_client_info": {
+          "package_name": "com.example.feedyou"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjvnCA6wJde2V9lwpsvLt_dMk8rzKlSmE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
