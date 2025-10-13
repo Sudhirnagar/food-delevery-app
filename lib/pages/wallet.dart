@@ -15,56 +15,52 @@ class Wallet extends StatefulWidget {
 }
 
 class _WalletState extends State<Wallet> {
-  String? wallet, id;
+  String wallet = "0", id = "";
   int? add;
-  TextEditingController amountcontroller = new TextEditingController();
-
-  getthesharedpref() async {
-    wallet = await SharedPreferenceHelper().getUserWallet();
-    id = await SharedPreferenceHelper().getUserId();
-    setState(() {});
-  }
-
-  ontheload() async {
-    await getthesharedpref();
-    setState(() {});
-  }
+  TextEditingController amountcontroller = TextEditingController();
+  Map<String, dynamic>? paymentIntent;
 
   @override
   void initState() {
-    ontheload();
     super.initState();
+    fetchWalletData();
   }
 
-  Map<String, dynamic>? paymentIntent;
+  // Fetch wallet data safely
+  Future<void> fetchWalletData() async {
+    wallet = await SharedPreferenceHelper().getUserWallet() ?? "0";
+    id = await SharedPreferenceHelper().getUserId() ?? "";
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: wallet == null
-          ? Center(child: CircularProgressIndicator())
+      body: wallet.isEmpty
+          ? const Center(child: CircularProgressIndicator())
           : Container(
-              margin: EdgeInsets.only(top: 60.0),
+              margin: const EdgeInsets.only(top: 60.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Material(
-                      elevation: 2.0,
-                      child: Container(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: Center(
-                              child: Text(
-                            "Wallet",
-                            style: AppWidget.HeadlineTextFeildStyle(),
-                          )))),
-                  SizedBox(
-                    height: 30.0,
+                    elevation: 2.0,
+                    child: Container(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Center(
+                        child: Text(
+                          "Wallet",
+                          style: AppWidget.HeadlineTextFeildStyle(),
+                        ),
+                      ),
+                    ),
                   ),
+                  const SizedBox(height: 30.0),
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(color: Color(0xFFF2F2F2)),
+                    decoration: const BoxDecoration(color: Color(0xFFF2F2F2)),
                     child: Row(
                       children: [
                         Image.asset(
@@ -73,9 +69,7 @@ class _WalletState extends State<Wallet> {
                           width: 60,
                           fit: BoxFit.cover,
                         ),
-                        SizedBox(
-                          width: 40.0,
-                        ),
+                        const SizedBox(width: 40.0),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -83,11 +77,9 @@ class _WalletState extends State<Wallet> {
                               "Your Wallet",
                               style: AppWidget.LightTextFeildStyle(),
                             ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
+                            const SizedBox(height: 5.0),
                             Text(
-                              "\$" + wallet!,
+                              "\$$wallet",
                               style: AppWidget.BoldTextFeildStyle(),
                             )
                           ],
@@ -95,9 +87,7 @@ class _WalletState extends State<Wallet> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  const SizedBox(height: 20.0),
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Text(
@@ -105,89 +95,40 @@ class _WalletState extends State<Wallet> {
                       style: AppWidget.SemiBoldTextFeildStyle(),
                     ),
                   ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
+                  const SizedBox(height: 10.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          makePayment('100');
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFE9E2E2)),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "\$" + "100",
-                            style: AppWidget.SemiBoldTextFeildStyle(),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          makePayment('500');
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFE9E2E2)),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "\$" + "500",
-                            style: AppWidget.SemiBoldTextFeildStyle(),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          makePayment('1000');
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFE9E2E2)),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "\$" + "1000",
-                            style: AppWidget.SemiBoldTextFeildStyle(),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          makePayment('2000');
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFE9E2E2)),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "\$" + "2000",
-                            style: AppWidget.SemiBoldTextFeildStyle(),
-                          ),
-                        ),
-                      )
-                    ],
+                    children: ["100", "500", "1000", "2000"]
+                        .map((amt) => GestureDetector(
+                              onTap: () => makePayment(amt),
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color(0xFFE9E2E2)),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  "\$$amt",
+                                  style: AppWidget.SemiBoldTextFeildStyle(),
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
-                  SizedBox(
-                    height: 50.0,
-                  ),
+                  const SizedBox(height: 50.0),
                   GestureDetector(
                     onTap: () {
-                      // openEdit();
+                      openEdit();
                     },
                     child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20.0),
-                      padding: EdgeInsets.symmetric(vertical: 12.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          color: Color(0xFF008080),
+                          color: const Color(0xFF008080),
                           borderRadius: BorderRadius.circular(8)),
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           "Add Money",
                           style: TextStyle(
@@ -208,98 +149,76 @@ class _WalletState extends State<Wallet> {
   Future<void> makePayment(String amount) async {
     try {
       paymentIntent = await createPaymentIntent(amount, 'INR');
-      //Payment Sheet
-      await Stripe.instance
-          .initPaymentSheet(
-              paymentSheetParameters: SetupPaymentSheetParameters(
-                  paymentIntentClientSecret: paymentIntent!['client_secret'],
-                  // applePay: const PaymentSheetApplePay(merchantCountryCode: '+92',),
-                  // googlePay: const PaymentSheetGooglePay(testEnv: true, currencyCode: "US", merchantCountryCode: "+92"),
-                  style: ThemeMode.dark,
-                  merchantDisplayName: 'Adnan'))
-          .then((value) {});
 
-      ///now finally display payment sheeet
-      displayPaymentSheet(amount);
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: paymentIntent!['client_secret'],
+          style: ThemeMode.dark,
+          merchantDisplayName: 'Adnan',
+        ),
+      );
+
+      await displayPaymentSheet(amount);
     } catch (e, s) {
       print('exception:$e$s');
     }
   }
 
-  displayPaymentSheet(String amount) async {
+  Future<void> displayPaymentSheet(String amount) async {
     try {
-      await Stripe.instance.presentPaymentSheet().then((value) async {
-        add = int.parse(wallet!) + int.parse(amount);
-        await SharedPreferenceHelper().saveUserWallet(add.toString());
-        await DatabaseMethods().UpdateUserwallet(id!, add.toString());
-        // ignore: use_build_context_synchronously
-        showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: const [
-                          Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                          ),
-                          Text("Payment Successfull"),
-                        ],
-                      ),
-                    ],
-                  ),
-                ));
-        await getthesharedpref();
-        // ignore: use_build_context_synchronously
+      await Stripe.instance.presentPaymentSheet();
 
-        paymentIntent = null;
-      }).onError((error, stackTrace) {
-        print('Error is:--->$error $stackTrace');
-      });
-    } on StripeException catch (e) {
-      print('Error is:---> $e');
-      showDialog(
+      // Safely update wallet
+      add = int.parse(wallet) + int.parse(amount);
+      wallet = add.toString();
+      setState(() {});
+
+      // Save locally and update database
+      await SharedPreferenceHelper().saveUserWallet(wallet);
+      DatabaseMethods().UpdateUserwallet(id, wallet);
+
+      if (mounted) {
+        showDialog(
           context: context,
           builder: (_) => const AlertDialog(
-                content: Text("Cancelled "),
-              ));
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green),
+                SizedBox(width: 10),
+                Text("Payment Successful"),
+              ],
+            ),
+          ),
+        );
+      }
     } catch (e) {
-      print('$e');
+      print(e);
     }
   }
 
-  //  Future<Map<String, dynamic>>
-  createPaymentIntent(String amount, String currency) async {
-    try {
-      Map<String, dynamic> body = {
-        'amount': calculateAmount(amount),
-        'currency': currency,
-        'payment_method_types[]': 'card'
-      };
+  Future<Map<String, dynamic>> createPaymentIntent(
+      String amount, String currency) async {
+    Map<String, dynamic> body = {
+      'amount': calculateAmount(amount),
+      'currency': currency,
+      'payment_method_types[]': 'card',
+    };
 
-      var response = await http.post(
-        Uri.parse('https://api.stripe.com/v1/payment_intents'),
-        headers: {
-          'Authorization': 'Bearer $SecretKey',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body,
-      );
-      // ignore: avoid_print
-      print('Payment Intent Body->>> ${response.body.toString()}');
-      return jsonDecode(response.body);
-    } catch (err) {
-      // ignore: avoid_print
-      print('err charging user: ${err.toString()}');
-    }
+    var response = await http.post(
+      Uri.parse('https://api.stripe.com/v1/payment_intents'),
+      headers: {
+        'Authorization': 'Bearer $SecretKey',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: body,
+    );
+
+    print('Payment Intent Body->>> ${response.body}');
+    return jsonDecode(response.body);
   }
 
-  calculateAmount(String amount) {
-    final calculatedAmout = (int.parse(amount)) * 100;
-
-    return calculatedAmout.toString();
+  String calculateAmount(String amount) {
+    return (int.parse(amount) * 100).toString();
   }
 
   Future openEdit() => showDialog(
@@ -317,9 +236,7 @@ class _WalletState extends State<Wallet> {
                               Navigator.pop(context);
                             },
                             child: Icon(Icons.cancel)),
-                        SizedBox(
-                          width: 60.0,
-                        ),
+                        SizedBox(width: 60.0),
                         Center(
                           child: Text(
                             "Add Money",
@@ -331,13 +248,9 @@ class _WalletState extends State<Wallet> {
                         )
                       ],
                     ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
+                    SizedBox(height: 20.0),
                     Text("Amount"),
-                    SizedBox(
-                      height: 10.0,
-                    ),
+                    SizedBox(height: 10.0),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 10.0),
                       decoration: BoxDecoration(
@@ -349,9 +262,7 @@ class _WalletState extends State<Wallet> {
                             border: InputBorder.none, hintText: 'Enter Amount'),
                       ),
                     ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
+                    SizedBox(height: 20.0),
                     Center(
                       child: GestureDetector(
                         onTap: () {

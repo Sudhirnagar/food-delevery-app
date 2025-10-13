@@ -41,8 +41,9 @@ class SharedPreferenceHelper {
     return prefs.getString(userEmailKey);
   }
 
-  Future<String?> getUserWallet() async {
+  Future<String> getUserWallet() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(userWalletKey);
+    // default to "0" if null
+    return prefs.getString(userWalletKey) ?? "0";
   }
 }
