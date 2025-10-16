@@ -1,4 +1,4 @@
-import 'package:feedyou/pages/wallet.dart';
+import 'package:feedyou/admin/admin_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Poppins',
       ),
-      home: Wallet(),
+      home: Onboard(),
     );
   }
 }
