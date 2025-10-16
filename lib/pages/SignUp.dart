@@ -1,6 +1,7 @@
 import 'package:feedyou/pages/bottom_nav_bar.dart';
 import 'package:feedyou/pages/login.dart';
 import 'package:feedyou/service/database.dart';
+import 'package:feedyou/service/shared_pref.dart';
 import 'package:feedyou/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,15 +17,19 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   String name = "", email = "", password = "";
 
-  TextEditingController nameController = new TextEditingController();
-  TextEditingController passwordController = new TextEditingController();
-  TextEditingController emailController = new TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   final _formkey = GlobalKey<FormState>();
 
+  // Error in original code: SharedPreferences me userId save nahi ho raha tha
+  // Isliye Details screen me id null aa rahi thi
+
   registration() async {
-    if (email != null && password != null) {
+    if (email.isNotEmpty && password.isNotEmpty) {
       try {
+        // Firebase Authentication me signup
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
@@ -32,8 +37,10 @@ class _SignupState extends State<Signup> {
           const SnackBar(content: Text("Registration Successful")),
         );
 
+        // Generate unique ID for user
         String Id = randomAlphaNumeric(10);
 
+        // Save user info in Firestore
         Map<String, dynamic> addUserInfo = {
           "name": nameController.text,
           "Email": emailController.text,
@@ -41,6 +48,14 @@ class _SignupState extends State<Signup> {
           "Id": Id,
         };
         await DatabaseMethods().addUserDetail(addUserInfo, Id);
+
+        // ✅ FIX: Save user info in SharedPreferences
+        // Pehle ye part missing tha, isliye Details me id null aa rahi thi
+        await SharedPreferenceHelper().saveUserId(Id);
+        await SharedPreferenceHelper().saveUserName(nameController.text);
+        await SharedPreferenceHelper().saveUserEmail(emailController.text);
+
+        // Navigate to BottomNavBar
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => BottomNavBar()),
@@ -113,9 +128,7 @@ class _SignupState extends State<Signup> {
                       width: MediaQuery.of(context).size.width / 4,
                       fit: BoxFit.cover,
                     )),
-                    SizedBox(
-                      height: 50.0,
-                    ),
+                    SizedBox(height: 50.0),
                     Material(
                       elevation: 10,
                       borderRadius: BorderRadius.circular(20),
@@ -131,16 +144,12 @@ class _SignupState extends State<Signup> {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
-                                SizedBox(
-                                  height: 30.0,
-                                ),
+                                SizedBox(height: 30.0),
                                 Text(
                                   "Sign Up",
                                   style: AppWidget.HeadlineTextFeildStyle(),
                                 ),
-                                SizedBox(
-                                  height: 30.0,
-                                ),
+                                SizedBox(height: 30.0),
                                 TextFormField(
                                   controller: nameController,
                                   validator: (value) {
@@ -152,11 +161,9 @@ class _SignupState extends State<Signup> {
                                       hintText: 'Name',
                                       hintStyle:
                                           AppWidget.SemiBoldTextFeildStyle(),
-                                      prefixIcon: Icon(Icons.email_outlined)),
+                                      prefixIcon: Icon(Icons.person_outline)),
                                 ),
-                                SizedBox(
-                                  height: 30.0,
-                                ),
+                                SizedBox(height: 30.0),
                                 TextFormField(
                                   controller: emailController,
                                   validator: (value) {
@@ -170,9 +177,7 @@ class _SignupState extends State<Signup> {
                                           AppWidget.SemiBoldTextFeildStyle(),
                                       prefixIcon: Icon(Icons.email_outlined)),
                                 ),
-                                SizedBox(
-                                  height: 30.0,
-                                ),
+                                SizedBox(height: 30.0),
                                 TextFormField(
                                   controller: passwordController,
                                   validator: (value) {
@@ -185,11 +190,10 @@ class _SignupState extends State<Signup> {
                                       hintText: 'Password',
                                       hintStyle:
                                           AppWidget.SemiBoldTextFeildStyle(),
-                                      prefixIcon: Icon(Icons.password_outlined)),
+                                      prefixIcon:
+                                          Icon(Icons.password_outlined)),
                                 ),
-                                SizedBox(
-                                  height: 85.0,
-                                ),
+                                SizedBox(height: 85.0),
                                 GestureDetector(
                                   onTap: () async {
                                     if (_formkey.currentState!.validate()) {
@@ -198,8 +202,8 @@ class _SignupState extends State<Signup> {
                                         name = nameController.text;
                                         password = passwordController.text;
                                       });
+                                      registration();
                                     }
-                                    registration();
                                   },
                                   child: Material(
                                     elevation: 5.0,
@@ -230,9 +234,7 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 70.0,
-                    ),
+                    SizedBox(height: 70.0),
                     GestureDetector(
                         onTap: () {
                           Navigator.pushReplacement(context,

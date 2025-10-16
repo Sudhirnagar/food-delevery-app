@@ -33,33 +33,51 @@ class _AddFoodState extends State<AddFood> {
 
   uploadItem() async {
     if (selectedImage != null &&
-        namecontroller.text != "" &&
-        pricecontroller.text != "" &&
-        detailcontroller.text != "") {
+        namecontroller.text.isNotEmpty &&
+        pricecontroller.text.isNotEmpty &&
+        detailcontroller.text.isNotEmpty &&
+        value != null) {
       String addId = randomAlphaNumeric(10);
+
+      // Upload image to Firebase Storage
       Reference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child("blogImages").child(addId);
+          FirebaseStorage.instance.ref().child("foodImages").child(addId);
+      UploadTask uploadTask = firebaseStorageRef.putFile(selectedImage!);
+      var downloadUrl = await (await uploadTask).ref.getDownloadURL();
 
-      final UploadTask task = firebaseStorageRef.putFile(selectedImage!);
-
-      var downloadUrl = await (await task).ref.getDownloadURL();
-
+      // Create food data map
       Map<String, dynamic> addItem = {
         "Image": downloadUrl,
         "name": namecontroller.text,
         "price": pricecontroller.text,
-        "Detail": detailcontroller.text
+        "Detail": detailcontroller.text,
+        "Category": value, // category like 'Pizza', 'Salad', etc.
       };
 
-      await DatabaseMethods().addFoodItem(addItem, value!).then(
-        (value) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.green,
-              content: Text(
-                "Food item added successfully",
-                style: TextStyle(fontSize: 18.0),
-              )));
-        },
+      // Add item to Firestore
+      await DatabaseMethods().addFoodItem(addItem, value!).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              "Food item added successfully!",
+              style: TextStyle(fontSize: 18.0),
+            ),
+          ),
+        );
+
+        //This line will return to Home automatically
+        Navigator.pop(context);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            "Please fill all fields and select an image!",
+            style: TextStyle(fontSize: 16.0),
+          ),
+        ),
       );
     }
   }

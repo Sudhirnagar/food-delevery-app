@@ -1,6 +1,7 @@
 import 'package:feedyou/pages/SignUp.dart';
 import 'package:feedyou/pages/bottom_nav_bar.dart';
 import 'package:feedyou/pages/forgotPassword.dart';
+import 'package:feedyou/service/shared_pref.dart'; // added SharedPreferences helper
 import 'package:feedyou/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +23,17 @@ class _LogInState extends State<LogIn> {
 
   _userLogin() async {
     try {
-      await FirebaseAuth.instance
+      // Sign in with Firebase
+      UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
-      // If login successful
+      // Save the user id in SharedPreferences
+      String uid = userCredential.user!.uid;
+      await SharedPreferenceHelper().saveUserId(uid);
+
+      // Login successful message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             "Login Successful",
             style: TextStyle(fontSize: 18, color: Colors.white),
@@ -35,6 +41,8 @@ class _LogInState extends State<LogIn> {
           backgroundColor: Colors.green,
         ),
       );
+
+      // Navigate to BottomNavBar
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => BottomNavBar()),
@@ -42,23 +50,20 @@ class _LogInState extends State<LogIn> {
       );
     } on FirebaseAuthException catch (e) {
       String message = '';
-
-      // --- ERROR 1: Typo in your original code ---
-      // You wrote 'user-not-fount', correct is 'user-not-found'
       if (e.code == 'user-not-found') {
         message = "No user found for that email.";
-      }
-      // --- ERROR 2: Correct error code ---
-      else if (e.code == 'wrong-password') {
+      } else if (e.code == 'wrong-password') {
         message = "Wrong password provided.";
       } else {
         message = "Login failed. Try again.";
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(message, style: TextStyle(fontSize: 18)),
-        backgroundColor: Colors.red,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message, style: const TextStyle(fontSize: 18)),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -68,11 +73,11 @@ class _LogInState extends State<LogIn> {
       body: Container(
         child: Stack(
           children: [
-            // --- Top gradient background ---
+            // Top gradient background
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 1.5,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -83,27 +88,25 @@ class _LogInState extends State<LogIn> {
                 ),
               ),
             ),
-
-            // --- Bottom white container ---
+            // Bottom white container
             Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height / 2.5),
+              margin:
+                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 2.5),
               height: MediaQuery.of(context).size.height / 2,
               width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(40),
                       topRight: Radius.circular(40))),
             ),
-
-            // --- Main content ---
+            // Main content
             Container(
-              margin: EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
+              margin: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    // --- Logo ---
+                    // Logo
                     Center(
                       child: Image.asset(
                         "assets/images/logo.png",
@@ -111,31 +114,28 @@ class _LogInState extends State<LogIn> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    SizedBox(height: 50.0),
-
-                    // --- Card containing form ---
+                    const SizedBox(height: 50.0),
+                    // Form Card
                     Material(
                       elevation: 10,
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20)),
                         child: Form(
-                          key:
-                              _formKey, // --- ERROR 3: Missing Form in original code ---
+                          key: _formKey,
                           child: Column(
                             children: [
-                              SizedBox(height: 30.0),
+                              const SizedBox(height: 30.0),
                               Text(
                                 "Login",
                                 style: AppWidget.HeadlineTextFeildStyle(),
                               ),
-                              SizedBox(height: 30.0),
-
-                              // --- Email field ---
+                              const SizedBox(height: 30.0),
+                              // Email
                               TextFormField(
                                 controller: useremailController,
                                 validator: (value) {
@@ -144,15 +144,12 @@ class _LogInState extends State<LogIn> {
                                   }
                                   return null;
                                 },
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                     hintText: 'Email',
-                                    hintStyle:
-                                        AppWidget.SemiBoldTextFeildStyle(),
                                     prefixIcon: Icon(Icons.email_outlined)),
                               ),
-                              SizedBox(height: 30.0),
-
-                              // --- Password field ---
+                              const SizedBox(height: 30.0),
+                              // Password
                               TextFormField(
                                 controller: userpasswordController,
                                 validator: (value) {
@@ -162,22 +159,18 @@ class _LogInState extends State<LogIn> {
                                   return null;
                                 },
                                 obscureText: true,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                     hintText: 'Password',
-                                    hintStyle:
-                                        AppWidget.SemiBoldTextFeildStyle(),
                                     prefixIcon: Icon(Icons.password_outlined)),
                               ),
-                              SizedBox(height: 20.0),
-
-                              // --- Forgot Password text ---
+                              const SizedBox(height: 20.0),
+                              // Forgot Password
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ForgotPassword(),
-                                    ),
+                                        builder: (context) => ForgotPassword()),
                                   );
                                 },
                                 child: Container(
@@ -188,12 +181,10 @@ class _LogInState extends State<LogIn> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 80.0),
-
-                              // --- Login button ---
+                              const SizedBox(height: 80.0),
+                              // Login button
                               GestureDetector(
                                 onTap: () {
-                                  // --- Only login if form is valid ---
                                   if (_formKey.currentState!.validate()) {
                                     setState(() {
                                       email = useremailController.text.trim();
@@ -208,38 +199,36 @@ class _LogInState extends State<LogIn> {
                                   borderRadius: BorderRadius.circular(20),
                                   child: Container(
                                     padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
+                                        const EdgeInsets.symmetric(vertical: 8.0),
                                     width: 200,
                                     decoration: BoxDecoration(
-                                        color: Color(0Xffff5722),
+                                        color: const Color(0Xffff5722),
                                         borderRadius:
                                             BorderRadius.circular(20)),
-                                    child: Center(
+                                    child: const Center(
                                         child: Text(
                                       "LOGIN",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 18.0,
-                                          fontFamily: 'Poppins1',
                                           fontWeight: FontWeight.bold),
                                     )),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20.0),
+                              const SizedBox(height: 20.0),
                             ],
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 70.0),
-
-                    // --- Navigate to Signup ---
+                    const SizedBox(height: 70.0),
+                    // Navigate to Signup
                     GestureDetector(
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => Signup()),
+                          MaterialPageRoute(builder: (context) => const Signup()),
                         );
                       },
                       child: Text(
