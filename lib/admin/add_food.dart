@@ -250,31 +250,32 @@ class _AddFoodState extends State<AddFood> {
                     color: Color(0xFFececf8),
                     borderRadius: BorderRadius.circular(10)),
                 child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                  items: fooditems
-                      .map(
-                        (item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style:
-                                TextStyle(fontSize: 18.0, color: Colors.black),
+                  child: DropdownButton<String>(
+                    items: fooditems
+                        .map(
+                          (item) => DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                  fontSize: 18.0, color: Colors.black),
+                            ),
                           ),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: ((value) => setState(() {
-                        this.value = value;
-                      })),
-                  dropdownColor: Colors.white,
-                  hint: Text("Select Category"),
-                  iconSize: 36,
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.black,
+                        )
+                        .toList(),
+                    onChanged: ((value) => setState(() {
+                          this.value = value;
+                        })),
+                    dropdownColor: Colors.white,
+                    hint: Text("Select Category"),
+                    iconSize: 36,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.black,
+                    ),
+                    value: value,
                   ),
-                  value: value,
-                )),
+                ),
               ),
               SizedBox(
                 height: 30.0,

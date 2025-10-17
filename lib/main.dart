@@ -1,5 +1,3 @@
-import 'package:feedyou/admin/home_admin.dart';
-import 'package:feedyou/pages/home.dart';
 import 'package:feedyou/pages/onboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

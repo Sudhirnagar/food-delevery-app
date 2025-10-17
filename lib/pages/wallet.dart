@@ -28,7 +28,7 @@ class _WalletState extends State<Wallet> {
 
   // Fetch wallet data safely
   Future<void> fetchWalletData() async {
-    wallet = await SharedPreferenceHelper().getUserWallet();
+    wallet = (await SharedPreferenceHelper().getUserWallet())!;
     id = await SharedPreferenceHelper().getUserId() ?? "";
     setState(() {});
   }

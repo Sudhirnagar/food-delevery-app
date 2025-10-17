@@ -20,7 +20,7 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
   int a = 1; // quantity
-  double total = 0.0;
+  int total = 0;
 
   String? id;
 
@@ -38,7 +38,7 @@ class _DetailsState extends State<Details> {
   void initState() {
     super.initState();
     ontheload();
-    total = double.tryParse(widget.price) ?? 0.0;
+    total = int.parse(widget.price) ?? 0;
   }
 
   @override
@@ -74,7 +74,7 @@ class _DetailsState extends State<Details> {
                   onTap: () {
                     if (a > 1) {
                       a--;
-                      total -= double.tryParse(widget.price) ?? 0.0;
+                      total -= int.parse(widget.price) ?? 0;
                       setState(() {});
                     }
                   },
@@ -92,7 +92,7 @@ class _DetailsState extends State<Details> {
                   onTap: () {
                     if (a < 10) {
                       a++;
-                      total += double.tryParse(widget.price) ?? 0.0;
+                      total += int.parse(widget.price) ?? 0;
                       setState(() {});
                     }
                   },
@@ -130,7 +130,7 @@ class _DetailsState extends State<Details> {
                       Text('Total price',
                           style: AppWidget.SemiBoldTextFeildStyle()),
                       Text(
-                        "₹${total.toStringAsFixed(2)}",
+                        "₹${total.toString()}",
                         style: AppWidget.SemiBoldTextFeildStyle(),
                       ),
                     ],
@@ -140,19 +140,17 @@ class _DetailsState extends State<Details> {
                       Map<String, dynamic> addFoodtoCart = {
                         "name": widget.name,
                         "Quantity": a.toString(),
-                        "Total": total.toStringAsFixed(2),
+                        "Total": total.toString(),
                         "Image": widget.image
                       };
 
-                      await DatabaseMethods()
-                          .addFoodToCart(addFoodtoCart, id!);
+                      await DatabaseMethods().addFoodToCart(addFoodtoCart, id!);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
                             "Item added to cart",
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.white),
+                            style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                           backgroundColor: Colors.green,
                         ),
