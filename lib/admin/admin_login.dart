@@ -84,6 +84,7 @@ class _AdminLoginState extends State<AdminLogin> {
                                         if (value == null || value.isEmpty) {
                                           return 'Please Enter Username';
                                         }
+                                        return null;
                                       },
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
@@ -114,6 +115,7 @@ class _AdminLoginState extends State<AdminLogin> {
                                         if (value == null || value.isEmpty) {
                                           return 'Please Enter Password';
                                         }
+                                        return null;
                                       },
                                       decoration: InputDecoration(
                                           border: InputBorder.none,

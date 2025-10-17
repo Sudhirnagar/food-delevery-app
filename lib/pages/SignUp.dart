@@ -30,9 +30,6 @@ class _SignupState extends State<Signup> {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
         // Firebase Authentication me signup
-        UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: email, password: password);
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Registration Successful")),
         );
@@ -156,6 +153,7 @@ class _SignupState extends State<Signup> {
                                     if (value == null || value.isEmpty) {
                                       return 'Please Enter your name';
                                     }
+                                    return null;
                                   },
                                   decoration: InputDecoration(
                                       hintText: 'Name',
@@ -170,6 +168,7 @@ class _SignupState extends State<Signup> {
                                     if (value == null || value.isEmpty) {
                                       return "Please Enter your Email";
                                     }
+                                    return null;
                                   },
                                   decoration: InputDecoration(
                                       hintText: 'Email',
@@ -184,6 +183,7 @@ class _SignupState extends State<Signup> {
                                     if (value == null || value.isEmpty) {
                                       return "Please Enter your password";
                                     }
+                                    return null;
                                   },
                                   obscureText: true,
                                   decoration: InputDecoration(

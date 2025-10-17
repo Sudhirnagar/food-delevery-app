@@ -38,7 +38,7 @@ class _DetailsState extends State<Details> {
   void initState() {
     super.initState();
     ontheload();
-    total = int.parse(widget.price) ?? 0;
+    total = int.parse(widget.price);
   }
 
   @override
@@ -74,7 +74,7 @@ class _DetailsState extends State<Details> {
                   onTap: () {
                     if (a > 1) {
                       a--;
-                      total -= int.parse(widget.price) ?? 0;
+                      total -= int.parse(widget.price);
                       setState(() {});
                     }
                   },
@@ -92,7 +92,7 @@ class _DetailsState extends State<Details> {
                   onTap: () {
                     if (a < 10) {
                       a++;
-                      total += int.parse(widget.price) ?? 0;
+                      total += int.parse(widget.price);
                       setState(() {});
                     }
                   },
